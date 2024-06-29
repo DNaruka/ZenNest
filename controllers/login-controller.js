@@ -24,7 +24,7 @@ export default async function (req, res) {
       .compare(password, data.password)
       .then((result) => {
         if (result) {
-          const token = jwt.sign(req.body, "skibidi");
+          const token = jwt.sign(req.body, "skibidi", { expiresIn: "2h" });
           res
             .status(200)
             .send({ message: "Logged In", auth: { email, token } });
