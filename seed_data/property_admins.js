@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 const data = [];
 
 const defaultPassword = await new Promise((resolve, reject) => {
-  bcrypt.hash("pandas", 10, (err, hash) => {
+  bcrypt.hash("skadoodle", 10, (err, hash) => {
     if (err) reject(err);
     resolve(hash);
   });

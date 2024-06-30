@@ -10,6 +10,18 @@ export default async function (req, res) {
   const { email, password } = req.body;
 
   try {
+    try {
+      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        throw new Error("Invalid Email.");
+      }
+
+      if (password.trim().length < 8) {
+        throw new Error("Invalid Password");
+      }
+    } catch (err) {
+      res.status(401).send(err.message);
+      return;
+    }
     const data = await knex("property_admin")
       .where("email_address", email.toUpperCase())
       .first();
@@ -45,6 +57,6 @@ export default async function (req, res) {
           .send("Error processing request. Please check and try again.");
       });
   } catch (err) {
-    res.status(500).send("Server Error");
+    res.status(500).send("Invalid fields.");
   }
 }
