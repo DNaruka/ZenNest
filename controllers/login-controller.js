@@ -35,7 +35,7 @@ export default async function (req, res) {
 
     bcrypt
       .compare(password, data.password)
-      .then(async (result) => {
+      .then((result) => {
         if (result) {
           const token = jwt.sign(
             { ...req.body, adminId: data["admin_id"] },
