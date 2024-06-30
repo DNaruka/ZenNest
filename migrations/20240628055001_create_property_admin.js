@@ -4,7 +4,8 @@
  */
 export function up(knex) {
   return knex.schema.createTable("property_admin", (table) => {
-    table.increments("admin_id").primary();
+    table.increments("id").primary();
+    table.integer("admin_id").notNullable();
     table.string("email_address").notNullable();
     table.string("password").notNullable();
     table
@@ -15,7 +16,9 @@ export function up(knex) {
       .onDelete("CASCADE");
     table.string("name").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
-    table.timestamp("updated_at").defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
+    table
+      .timestamp("updated_at")
+      .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
   });
 }
 
@@ -24,5 +27,5 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-    return knex.schema.dropTable("property_admin");
+  return knex.schema.dropTable("property_admin");
 }
