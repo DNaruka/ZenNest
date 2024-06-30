@@ -28,15 +28,16 @@ export default async function (req, res) {
 
     if (!data) {
       res.status(401).send({
-        message: "Email and Password don't match. Please check credentials.",
+        message: "User doesn't exist. Please contact administrator.",
       });
+      return;
     }
 
     bcrypt
       .compare(password, data.password)
-      .then((result) => {
+      .then(async (result) => {
         if (result) {
-          const token = jwt.sign(
+          const token = await jwt.sign(
             { ...req.body, propertyId: data["property_id"] },
             "skibidi",
             { expiresIn: "2h" }
