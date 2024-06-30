@@ -35,9 +35,9 @@ export default async function (req, res) {
 
     bcrypt
       .compare(password, data.password)
-      .then(async (result) => {
+      .then((result) => {
         if (result) {
-          const token = await jwt.sign(
+          const token = jwt.sign(
             { ...req.body, propertyId: data["property_id"] },
             "skibidi",
             { expiresIn: "2h" }
