@@ -13,6 +13,7 @@ const defaultPassword = await new Promise((resolve, reject) => {
 for (let i = 1; i <= 30; i++) {
   data.push({
     property_id: i,
+    admin_id: i,
     name: faker.person.fullName(),
     email_address: faker.internet.email().toUpperCase(),
     password: defaultPassword,

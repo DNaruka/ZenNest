@@ -37,7 +37,7 @@ export default async function (req, res) {
       .then((result) => {
         if (result) {
           const token = jwt.sign(
-            { ...req.body, propertyId: data["property_id"] },
+            { ...req.body, adminId: data["admin_id"] },
             "skibidi",
             { expiresIn: "2h" }
           );
