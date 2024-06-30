@@ -9,6 +9,8 @@ const knex = _knex(knexfile);
 export default async function (req, res) {
   const { email, password } = req.body;
 
+  // await new Promise(resolve => setTimeout(resolve, 3000));
+
   try {
     try {
       if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
@@ -42,9 +44,10 @@ export default async function (req, res) {
             "skibidi",
             { expiresIn: "2h" }
           );
-          res
-            .status(200)
-            .send({ message: "Logged In", auth: { email, token } });
+          res.status(200).send({
+            message: "Logged In",
+            auth: { email, token },
+          });
         } else {
           res.status(401).send({
             message:
