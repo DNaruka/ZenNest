@@ -8,10 +8,11 @@ const knex = _knex(knexfile);
 export const getProperties = async (req, res) => {
   const userData = await decryptAndVerifyToken(req);
 
-  const data = await knex("property").select("property.name", "property.location", "property.property_id")
+  const data = await knex("property").distinct("property.name", "property.location", "property.property_id")
     .innerJoin(
       "property_admin",
       "property.property_id",
+      "=",
       "property_admin.property_id"
     )
     .where("property_admin.admin_id", userData.adminId);
