@@ -8,7 +8,7 @@ const knex = _knex(knexfile);
 export const getProperties = async (req, res) => {
   const userData = await decryptAndVerifyToken(req);
 
-  const data = await knex("property")
+  const data = await knex("property").select("property.name", "property.location")
     .innerJoin(
       "property_admin",
       "property.property_id",
@@ -16,7 +16,7 @@ export const getProperties = async (req, res) => {
     )
     .where("property_admin.admin_id", userData.adminId);
 
-  res.status(200).send({ ...data, name: userData.name });
+  res.status(200).send({ list:data, name: userData.name});
 };
 
 export const getProperty = async (req, res) => {
