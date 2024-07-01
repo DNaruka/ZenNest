@@ -16,7 +16,7 @@ export const getProperties = async (req, res) => {
     )
     .where("property_admin.admin_id", userData.adminId);
 
-  res.status(200).send(data);
+  res.status(200).send({ ...data, name: userData.name });
 };
 
 export const getProperty = async (req, res) => {
