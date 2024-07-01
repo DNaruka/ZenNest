@@ -40,7 +40,64 @@ export const getProperty = async (req, res) => {
       return res.status(401).send("Unauthorized to view property");
     }
 
-    res.status(200).send(data);
+    const response = {
+      name: data[0].name,
+      postalCode: data[0].postal_code,
+      location: data[0].location,
+      maxFloors: data[0].max_floors,
+    };
+
+    res.status(200).send(response);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+export const putProperty = async (req, res) => {
+  const newData = req.body;
+  console.log(newData);
+
+  const propertyId = req.params.propertyId;
+
+  try {
+    if (!Number.isInteger(+propertyId)) throw new Error("Invalid Property Id");
+
+    if (newData.name.length < 4) throw new Error("Invalid name");
+    if (newData.location.length < 8) throw new Error("Invalid location");
+    if (newData.postalCode.length < 4) throw new Error("Invalid Postal Code");
+    if (
+      !Number.isInteger(+newData.maxFloors) ||
+      newData.maxFloors < 3 ||
+      newData.maxFloors > 90
+    )
+      throw new Error("Invalid Floors");
+
+    const userData = await decryptAndVerifyToken(req);
+
+    const data = await knex("property")
+      .innerJoin(
+        "property_admin",
+        "property.property_id",
+        "property_admin.property_id"
+      )
+      .where("property_admin.admin_id", userData.adminId)
+      .where("property.property_id", propertyId);
+
+    if (data.length === 0) {
+      return res.status(401).send("Unauthorized to view property");
+    }
+
+    const payload = {
+      name: newData.name,
+      max_floors: newData.maxFloors,
+      postal_code: newData.postalCode,
+      location: newData.location,
+    };
+    await knex("property")
+      .where("property.property_id", propertyId)
+      .update(payload);
+
+    res.status(201).send(newData);
   } catch (err) {
     res.status(400).send(err.message);
   }
