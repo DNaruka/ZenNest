@@ -149,3 +149,33 @@ export const putProperty = async (req, res) => {
     res.status(400).send(err.message);
   }
 };
+
+export const deleteProperty = async (req, res) => {
+  const propertyId = req.params.propertyId;
+
+  try {
+    if (!Number.isInteger(+propertyId)) throw new Error("Invalid Property Id");
+
+    const userData = await decryptAndVerifyToken(req);
+    const data = await knex("property")
+      .innerJoin(
+        "property_admin",
+        "property.property_id",
+        "property_admin.property_id"
+      )
+      .where("property.property_id", propertyId)
+      .andWhere("property_admin.admin_id", userData.adminId);
+
+    if (data.length === 0) {
+      return res.status(401).send("Unauthorized to view property");
+    }
+
+    const response = await knex("property")
+      .where("property_id", propertyId)
+      .del();
+
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
