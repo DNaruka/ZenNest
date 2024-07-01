@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  addProperty,
   getProperties,
   getProperty,
   putProperty,
@@ -8,7 +9,7 @@ import auth from "../auth.js";
 
 const router = Router();
 router.use(auth);
-router.route("/").get(getProperties);
+router.route("/").get(getProperties).post(addProperty);
 
 router.route("/:propertyId").get(getProperty).put(putProperty);
 
