@@ -8,7 +8,7 @@ const knex = _knex(knexfile);
 export const getProperties = async (req, res) => {
   const userData = await decryptAndVerifyToken(req);
 
-  const data = await knex("property").select("property.name", "property.location")
+  const data = await knex("property").select("property.name", "property.location", "property.property_id")
     .innerJoin(
       "property_admin",
       "property.property_id",
