@@ -9,8 +9,6 @@ const knex = _knex(knexfile);
 export default async function (req, res) {
   const { email, password } = req.body;
 
-  // await new Promise(resolve => setTimeout(resolve, 3000));
-
   try {
     try {
       if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
@@ -40,7 +38,7 @@ export default async function (req, res) {
       .then((result) => {
         if (result) {
           const token = jwt.sign(
-            { ...req.body, adminId: data["admin_id"] },
+            { ...req.body, adminId: data["admin_id"], name: data["name"] },
             "skibidi",
             { expiresIn: "2h" }
           );
