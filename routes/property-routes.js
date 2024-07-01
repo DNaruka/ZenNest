@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addProperty,
+  deleteProperty,
   getProperties,
   getProperty,
   putProperty,
@@ -11,6 +12,6 @@ const router = Router();
 router.use(auth);
 router.route("/").get(getProperties).post(addProperty);
 
-router.route("/:propertyId").get(getProperty).put(putProperty);
+router.route("/:propertyId").get(getProperty).put(putProperty).delete(deleteProperty);
 
 export default router;
