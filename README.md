@@ -58,8 +58,6 @@ No external APIs are needed for basic operations, but integration with email ser
     - **`App.js`**: Main application component.
     - **`components/`**: Reusable UI components.
     - **`pages/`**: Different pages/routes of the application.
-    - **`hooks/`**: Custom React hooks.
-- **`public/`**: Contains static assets like HTML files.
 - **`vite.config.js`**: Configuration for Vite.
 - **`.eslintrc.cjs`**: ESLint configuration for code linting.
 
@@ -67,9 +65,8 @@ No external APIs are needed for basic operations, but integration with email ser
 
 - **`server.js`**: Main entry point for the Node.js server.
 - **`routes/`**: Contains route definitions for various API endpoints.
-- **`models/`**: Knex.js models defining the database schema
 - **`controllers/`**: Contains business logic for handling requests and responses.
-- **`middlewares/`**: Custom middleware functions for authentication and error handling.
+- **`auth/`**: for authentication and error handling.
 
 ## Getting Started
 
