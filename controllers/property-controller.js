@@ -6,18 +6,23 @@ import { decryptAndVerifyToken } from "../auth.js";
 const knex = _knex(knexfile);
 
 export const getProperties = async (req, res) => {
-  const userData = await decryptAndVerifyToken(req);
+  try {
+    const userData = await decryptAndVerifyToken(req);
 
-  const data = await knex("property").distinct("property.name", "property.location", "property.property_id")
-    .innerJoin(
-      "property_admin",
-      "property.property_id",
-      "=",
-      "property_admin.property_id"
-    )
-    .where("property_admin.admin_id", userData.adminId);
+    const props = await knex("property_admin")
+      .distinct("property_id")
+      .where("admin_id", userData.adminId);
 
-  res.status(200).send({ list:data, name: userData.name});
+    const serializedProps = props.map((prop) => prop.property_id);
+
+    const data = await knex("property")
+      .distinct("property.name", "property.location", "property.property_id")
+      .whereIn("property_id", serializedProps);
+
+    res.status(200).send({ list: data, name: userData.name });
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 };
 
 export const getProperty = async (req, res) => {
@@ -27,25 +32,19 @@ export const getProperty = async (req, res) => {
     if (!Number.isInteger(+propertyId)) throw new Error("Invalid Property Id");
 
     const userData = await decryptAndVerifyToken(req);
-    const data = await knex("property")
-      .select(
-        "property.name",
-        "property.postal_code",
-        "property.max_floors",
-        "property.location"
-      )
-      .innerJoin(
-        "property_admin",
-        "property.property_id",
-        "=",
-        "property_admin.property_id"
-      )
-      .where("property.property_id", propertyId)
-      .andWhere("property_admin.admin_id", userData.adminId);
 
-    if (data.length === 0) {
-      return res.status(401).send("Unauthorized to view property");
+    const props = await knex("property_admin")
+      .select("property_id")
+      .where("admin_id", userData.adminId)
+      .andWhere("property_id", propertyId);
+
+    if (props.length < 1) {
+      return res.status(401).send("Unauthorized to view property1");
     }
+
+    const data = await knex("property")
+      .select("name", "postal_code", "max_floors", "location")
+      .where("property.property_id", propertyId);
 
     const response = {
       name: data[0].name,
@@ -122,17 +121,14 @@ export const putProperty = async (req, res) => {
 
     const userData = await decryptAndVerifyToken(req);
 
-    const data = await knex("property")
-      .innerJoin(
-        "property_admin",
-        "property.property_id",
-        "property_admin.property_id"
-      )
-      .where("property.property_id", propertyId)
-      .andWhere("property_admin.admin_id", userData.adminId);
+    
+    const props = await knex("property_admin")
+      .select("property_id")
+      .where("admin_id", userData.adminId)
+      .andWhere("property_id", propertyId);
 
-    if (data.length === 0) {
-      return res.status(401).send("Unauthorized to view property");
+    if (props.length < 1) {
+      return res.status(401).send("Unauthorized to view property1");
     }
 
     const payload = {
@@ -158,20 +154,17 @@ export const deleteProperty = async (req, res) => {
     if (!Number.isInteger(+propertyId)) throw new Error("Invalid Property Id");
 
     const userData = await decryptAndVerifyToken(req);
-    const data = await knex("property")
-      .innerJoin(
-        "property_admin",
-        "property.property_id",
-        "property_admin.property_id"
-      )
-      .where("property.property_id", propertyId)
-      .andWhere("property_admin.admin_id", userData.adminId);
 
-    if (data.length === 0) {
-      return res.status(401).send("Unauthorized to view property");
+    const props = await knex("property_admin")
+      .select("property_id")
+      .where("admin_id", userData.adminId)
+      .andWhere("property_id", propertyId);
+
+    if (props.length < 1) {
+      return res.status(401).send("Unauthorized to view property1");
     }
 
-    const response = await knex("property")
+    await knex("property")
       .where("property_id", propertyId)
       .del();
 
